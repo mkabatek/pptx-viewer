@@ -124,11 +124,13 @@ export class PptxHandlerRuntime extends PptxHandlerRuntimeBase {
 			// Non-critical — will fall back to type-grouped order
 		}
 
+		const slidePrefix = slidePath ? `${slidePath}-` : '';
 		return this.parseSpTreeChildren(
 			spTree as Record<string, unknown>,
 			slidePath,
 			rawXmlStr,
 			'p:spTree',
+			slidePrefix,
 		);
 	}
 }
