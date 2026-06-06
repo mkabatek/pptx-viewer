@@ -38,6 +38,7 @@
 		"prepare": "husky"
 	},
 	"devDependencies": {
+		"@mkabatek/pptx-viewer": "workspace:*",
 		"@playwright/test": "^1.60.0",
 		"@types/three": "^0.184.0",
 		"husky": "^9.1.7",
@@ -45,7 +46,6 @@
 		"lint-staged": "^16.4.0",
 		"oxfmt": "^0.47.0",
 		"oxlint": "^1.62.0",
-		"pptx-viewer": "workspace:*",
 		"pptx-viewer-core": "workspace:*",
 		"typescript": "^5.9.3",
 		"y-protocols": "^1.0.7",
