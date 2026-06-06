@@ -33,18 +33,8 @@ jobs:
           bun run --filter '@mkabatek/pptx-viewer' build
           cd packages/react && npx @tailwindcss/cli -i src/styles/pptx-viewer.css -o dist/pptx-viewer.css --minify
 
-      - name: Fetch npm OIDC token
-        id: oidc
-        run: |
-          token=$(curl -fsSL \
-            -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
-            "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=npm" \
-            | jq -r .value)
-          echo "::add-mask::$token"
-          echo "token=$token" >> "$GITHUB_OUTPUT"
-
       - name: Publish to npm
         run: npm publish --access public
         working-directory: packages/react
         env:
-          NODE_AUTH_TOKEN: ${{ steps.oidc.outputs.token }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
