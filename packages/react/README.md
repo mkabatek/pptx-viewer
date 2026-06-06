@@ -1,4 +1,8 @@
-# pptx-viewer
+# @mkabatek/pptx-viewer
+
+> **This is a fork of [ChristopherVR/pptx-viewer](https://github.com/ChristopherVR/pptx-viewer), published as `@mkabatek/pptx-viewer` on npm.**
+> Full credit for the library design, implementation, and documentation goes to the original author.
+> See the [fork changelog](https://github.com/mkabatek/pptx-viewer#fork-changes) for what was changed and why.
 
 A full-featured **React** component for viewing, editing, and presenting PowerPoint (.pptx) files in the browser. Built on top of `pptx-viewer-core`, it provides a complete UI with toolbar, inspector panels, slide canvas, animation engine, presentation mode, real-time collaboration, and export capabilities.
 
@@ -74,12 +78,12 @@ This package provides a drop-in React component that turns raw `.pptx` bytes int
 ## Quick Start
 
 ```tsx
-import { PowerPointViewer } from 'pptx-viewer';
-import type { PowerPointViewerHandle } from 'pptx-viewer';
+import { PowerPointViewer } from '@mkabatek/pptx-viewer';
+import type { PowerPointViewerHandle } from '@mkabatek/pptx-viewer';
 import { useRef, useEffect, useState } from 'react';
 
 // If your project does NOT use Tailwind CSS, import the bundled stylesheet:
-import 'pptx-viewer/styles';
+import '@mkabatek/pptx-viewer/styles';
 
 function App() {
 	const viewerRef = useRef<PowerPointViewerHandle>(null);
@@ -150,7 +154,7 @@ Exposed via `ref`. Extends `FileViewerHandle`.
 Standalone utility for rendering a DOM element to a Canvas with oklch colour space workaround.
 
 ```typescript
-import { renderToCanvas } from 'pptx-viewer';
+import { renderToCanvas } from '@mkabatek/pptx-viewer';
 
 const canvas = await renderToCanvas(element, options);
 // => HTMLCanvasElement with the rendered content
@@ -183,8 +187,8 @@ Import the self-contained CSS file that ships with the package. It includes all 
 
 ```tsx
 // Import once at your app's entry point
-import 'pptx-viewer/styles';
-// or: import "pptx-viewer/styles.css";
+import '@mkabatek/pptx-viewer/styles';
+// or: import "@mkabatek/pptx-viewer/styles.css";
 ```
 
 Then optionally customise with the `theme` prop or by setting CSS custom properties in your own stylesheet.
@@ -219,7 +223,7 @@ If you want full control, define the `--pptx-*` custom properties yourself and s
 ### `ViewerTheme` reference
 
 ```typescript
-import type { ViewerTheme } from 'pptx-viewer';
+import type { ViewerTheme } from '@mkabatek/pptx-viewer';
 
 const myTheme: ViewerTheme = {
 	colors: {
@@ -263,7 +267,7 @@ import {
 	defaultCssVars, // Get all default --pptx-* CSS vars
 	ViewerThemeProvider, // React context provider (advanced)
 	useViewerTheme, // Hook to read current theme from context
-} from 'pptx-viewer';
+} from '@mkabatek/pptx-viewer';
 ```
 
 ### Light theme example
