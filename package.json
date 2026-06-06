@@ -1,0 +1,73 @@
+{
+	"name": "pptx-viewer",
+	"version": "1.5.0",
+	"description": "React-based PowerPoint viewer, editor, and canvas export",
+	"keywords": [
+		"editor",
+		"openxml",
+		"powerpoint",
+		"pptx",
+		"presentation",
+		"react",
+		"viewer"
+	],
+	"homepage": "https://github.com/mkabatek/pptx-viewer",
+	"bugs": {
+		"url": "https://github.com/mkabatek/pptx-viewer/issues"
+	},
+	"license": "MIT",
+	"author": "ChristopherVR",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/mkabatek/pptx-viewer.git"
+	},
+	"files": [
+		"dist/",
+		"src/styles/",
+		"LICENSE",
+		"README.md"
+	],
+	"main": "dist/index.mjs",
+	"module": "dist/index.mjs",
+	"types": "dist/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.mjs",
+			"require": "./dist/index.js"
+		},
+		"./viewer": {
+			"types": "./dist/viewer/index.d.ts",
+			"import": "./dist/viewer/index.mjs",
+			"require": "./dist/viewer/index.js"
+		},
+		"./styles": "./dist/pptx-viewer.css",
+		"./styles.css": "./dist/pptx-viewer.css",
+		"./theme.css": "./src/styles/theme.css"
+	},
+	"dependencies": {
+		"clsx": "^2.1.1",
+		"dompurify": "^3.4.2",
+		"html2canvas-pro": "^2.0.2",
+		"tailwind-merge": "^3.5.0"
+	},
+	"peerDependencies": {
+		"fast-xml-parser": "^5.7.3",
+		"framer-motion": "^12.38.0",
+		"i18next": "^26.0.8",
+		"jspdf": "^4.2.1",
+		"jszip": "^3.10.1",
+		"lucide-react": "^1.14.0",
+		"react": "^19.2.5",
+		"react-dom": "^19.2.5",
+		"react-i18next": "^17.0.6",
+		"react-icons": "^5.6.0"
+	},
+	"optionalDependencies": {
+		"@react-three/drei": "^10.7.7",
+		"@react-three/fiber": "^9.6.1",
+		"three": "^0.184.0",
+		"y-websocket": "^3.0.0",
+		"yjs": "^13.6.30"
+	}
+}

@@ -1,0 +1,527 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  build:
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
+      - uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Build all packages
+        run: bun run build
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: build-output
+          path: |
+            packages/*/dist
+            node_modules
+            packages/*/node_modules
+          retention-days: 1
+
+  lint:
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Lint
+        run: bun run lint
+
+      - name: Format check
+        run: bun run fmt:check
+
+  typecheck:
+    needs: build
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
+      - uses: oven-sh/setup-bun@v2
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-output
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Typecheck
+        run: bun run typecheck
+
+  test-core:
+    needs: build
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
+      - uses: oven-sh/setup-bun@v2
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-output
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Test core (excluding crypto)
+        run: cd packages/core && bun vitest run --reporter=verbose --reporter=github-actions --exclude 'src/core/utils/ooxml-crypto.test.ts'
+
+  test-core-crypto:
+    needs: build
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
+      - uses: oven-sh/setup-bun@v2
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-output
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Test core (ooxml-crypto)
+        run: cd packages/core && bun vitest run --reporter=verbose --reporter=github-actions src/core/utils/ooxml-crypto.test.ts
+
+  test-react:
+    needs: build
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
+      - uses: oven-sh/setup-bun@v2
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-output
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Test react
+        run: cd packages/react && bun vitest run --reporter=verbose --reporter=github-actions
+
+  test-emf-converter:
+    needs: build
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
+      - uses: oven-sh/setup-bun@v2
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-output
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Test emf-converter
+        run: cd packages/emf-converter && bun vitest run --reporter=verbose --reporter=github-actions
+
+  test-mtx-decompressor:
+    needs: build
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
+      - uses: oven-sh/setup-bun@v2
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-output
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Test mtx-decompressor
+        run: cd packages/mtx-decompressor && bun vitest run --reporter=verbose --reporter=github-actions --passWithNoTests
+
+  test-tools:
+    needs: build
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
+      - uses: oven-sh/setup-bun@v2
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-output
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Test tools
+        run: cd packages/tools && bun vitest run --reporter=verbose --reporter=github-actions
+
+  release:
+    needs:
+      [
+        lint,
+        typecheck,
+        test-core,
+        test-core-crypto,
+        test-react,
+        test-emf-converter,
+        test-mtx-decompressor,
+        test-tools,
+      ]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
+      - uses: oven-sh/setup-bun@v2
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-output
+
+      - name: Determine next version
+        id: version
+        run: |
+          # Find the highest existing semver tag (not just v1.0.*)
+          LATEST_TAG=$(git tag --list 'v[0-9]*.[0-9]*.[0-9]*' --sort=-version:refname | head -n 1)
+          if [ -z "$LATEST_TAG" ]; then
+            LATEST_TAG_VER="0.0.0"
+          else
+            LATEST_TAG_VER=$(echo "$LATEST_TAG" | sed 's/^v//')
+          fi
+          echo "Highest git tag version: ${LATEST_TAG_VER}"
+
+          # Check npm for the highest published version across all packages
+          NPM_MAX="0.0.0"
+          for pkg in emf-converter mtx-decompressor pptx-viewer-core pptx-react-viewer pptx-viewer-mcp; do
+            NPM_VER=$(npm view "$pkg" version 2>/dev/null || echo "0.0.0")
+            echo "  $pkg npm version: $NPM_VER"
+            if [ "$(printf '%s\n%s' "$NPM_MAX" "$NPM_VER" | sort -V | tail -1)" = "$NPM_VER" ]; then
+              NPM_MAX="$NPM_VER"
+            fi
+          done
+          echo "Highest npm version: ${NPM_MAX}"
+
+          # Use the higher of git tag vs npm as baseline
+          if [ "$(printf '%s\n%s' "$LATEST_TAG_VER" "$NPM_MAX" | sort -V | tail -1)" = "$NPM_MAX" ]; then
+            BASELINE="$NPM_MAX"
+          else
+            BASELINE="$LATEST_TAG_VER"
+          fi
+          echo "Baseline version: ${BASELINE}"
+
+          # Increment patch version from baseline
+          MAJOR=$(echo "$BASELINE" | cut -d. -f1)
+          MINOR=$(echo "$BASELINE" | cut -d. -f2)
+          PATCH=$(echo "$BASELINE" | cut -d. -f3)
+          NEXT_PATCH=$((PATCH + 1))
+          VERSION="${MAJOR}.${MINOR}.${NEXT_PATCH}"
+
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "tag=v${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "Next version: ${VERSION}"
+
+      - name: Update package versions
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          for pkgdir in packages/emf-converter packages/mtx-decompressor packages/core packages/react packages/tools; do
+            node -e "
+              const fs = require('fs');
+              const p = '${pkgdir}/package.json';
+              const data = JSON.parse(fs.readFileSync(p, 'utf8'));
+              data.version = '${VERSION}';
+              fs.writeFileSync(p, JSON.stringify(data, null, '\t') + '\n');
+            "
+          done
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Pack emf-converter
+        run: cd packages/emf-converter && bun pm pack
+
+      - name: Pack mtx-decompressor
+        run: cd packages/mtx-decompressor && bun pm pack
+
+      - name: Pack pptx-viewer-core
+        run: cd packages/core && bun pm pack
+
+      - name: Pack pptx-react-viewer
+        run: cd packages/react && bun pm pack
+
+      - name: Pack pptx-viewer-tools
+        run: cd packages/tools && bun pm pack
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: v${{ steps.version.outputs.version }}
+          generate_release_notes: true
+          files: |
+            packages/emf-converter/*.tgz
+            packages/mtx-decompressor/*.tgz
+            packages/core/*.tgz
+            packages/react/*.tgz
+            packages/tools/*.tgz
+
+  # ──────────────────────────────────────────────────────────────
+  # Publish to npm with provenance
+  # Auth: OIDC trusted publishing (default) or NPM_TOKEN secret.
+  #   - OIDC: requires Node 24+ (npm >= 11.5.1) and linked
+  #     publishers configured on npmjs.com for each package.
+  #   - Token fallback: set NPM_TOKEN secret in the "npm"
+  #     environment to use token auth instead.
+  #
+  # Package → registry mapping:
+  #   emf-converter     → https://www.npmjs.com/package/emf-converter
+  #   mtx-decompressor  → https://www.npmjs.com/package/mtx-decompressor
+  #   pptx-viewer-core  → https://www.npmjs.com/package/pptx-viewer-core
+  #   pptx-react-viewer → https://www.npmjs.com/package/pptx-react-viewer
+  #   pptx-viewer-mcp → https://www.npmjs.com/package/pptx-viewer-mcp
+  # ──────────────────────────────────────────────────────────────
+  publish:
+    needs: release
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push' && vars.NPM_PUBLISH == 'true'
+    runs-on: ubuntu-latest
+    environment: npm
+    permissions:
+      contents: read
+      id-token: write # Required for OIDC trusted publishing & provenance
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+
+      - uses: oven-sh/setup-bun@v2
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-output
+
+      - name: Determine current version
+        id: version
+        run: |
+          VERSION=$(git tag --list 'v[0-9]*.[0-9]*.[0-9]*' --sort=-version:refname | head -n 1 | sed 's/^v//')
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "Publishing version: ${VERSION}"
+
+      - name: Update package versions
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          for pkgdir in packages/emf-converter packages/mtx-decompressor packages/core packages/react packages/tools; do
+            node -e "
+              const fs = require('fs');
+              const p = '${pkgdir}/package.json';
+              const data = JSON.parse(fs.readFileSync(p, 'utf8'));
+              data.version = '${VERSION}';
+              fs.writeFileSync(p, JSON.stringify(data, null, '\t') + '\n');
+            "
+          done
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Prepare react package for publish
+        # The react package is published as "pptx-react-viewer" on npm,
+        # but uses "pptx-viewer" locally for workspace resolution.
+        # Also replace workspace:* references with real version ranges.
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          node -e "
+            const fs = require('fs');
+            const p = 'packages/react/package.json';
+            const data = JSON.parse(fs.readFileSync(p, 'utf8'));
+            data.name = 'pptx-react-viewer';
+            if (data.dependencies) {
+              for (const [k, v] of Object.entries(data.dependencies)) {
+                if (v === 'workspace:*') data.dependencies[k] = '^${VERSION}';
+              }
+            }
+            fs.writeFileSync(p, JSON.stringify(data, null, '\t') + '\n');
+          "
+
+      - name: Replace mermaid blocks with GitHub links in READMEs
+        run: |
+          REPO_URL="https://github.com/ChristopherVR/pptx-viewer"
+          for readme in packages/emf-converter/README.md packages/mtx-decompressor/README.md packages/core/README.md packages/react/README.md packages/tools/README.md; do
+            if [ -f "$readme" ]; then
+              pkg_dir=$(dirname "$readme")
+              github_link="${REPO_URL}/blob/main/${readme}"
+              # Replace ```mermaid ... ``` blocks with a link to the GitHub README
+              perl -0777 -i -pe "s|\`\`\`mermaid\n.*?\`\`\`|_See the [architecture diagrams on GitHub](${github_link}) for visual representations._|gs" "$readme"
+              echo "Processed $readme"
+            fi
+          done
+
+      # https://www.npmjs.com/package/emf-converter
+      - name: Publish emf-converter
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          EXISTING=$(npm view emf-converter@"$VERSION" version 2>/dev/null || echo "")
+          if [ "$EXISTING" = "$VERSION" ]; then
+            echo "emf-converter@$VERSION already published, skipping"
+          else
+            npm publish --provenance --access public
+          fi
+        working-directory: packages/emf-converter
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      # https://www.npmjs.com/package/mtx-decompressor
+      - name: Publish mtx-decompressor
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          EXISTING=$(npm view mtx-decompressor@"$VERSION" version 2>/dev/null || echo "")
+          if [ "$EXISTING" = "$VERSION" ]; then
+            echo "mtx-decompressor@$VERSION already published, skipping"
+          else
+            npm publish --provenance --access public
+          fi
+        working-directory: packages/mtx-decompressor
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      # https://www.npmjs.com/package/pptx-viewer-core
+      - name: Publish pptx-viewer-core
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          EXISTING=$(npm view pptx-viewer-core@"$VERSION" version 2>/dev/null || echo "")
+          if [ "$EXISTING" = "$VERSION" ]; then
+            echo "pptx-viewer-core@$VERSION already published, skipping"
+          else
+            npm publish --provenance --access public
+          fi
+        working-directory: packages/core
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      # https://www.npmjs.com/package/pptx-react-viewer
+      - name: Publish pptx-react-viewer
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          EXISTING=$(npm view pptx-react-viewer@"$VERSION" version 2>/dev/null || echo "")
+          if [ "$EXISTING" = "$VERSION" ]; then
+            echo "pptx-react-viewer@$VERSION already published, skipping"
+          else
+            npm publish --provenance --access public
+          fi
+        working-directory: packages/react
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Prepare tools package for publish
+        # Replace workspace:* references with real version ranges.
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          node -e "
+            const fs = require('fs');
+            const p = 'packages/tools/package.json';
+            const data = JSON.parse(fs.readFileSync(p, 'utf8'));
+            if (data.peerDependencies) {
+              for (const [k, v] of Object.entries(data.peerDependencies)) {
+                if (v === 'workspace:*') data.peerDependencies[k] = '^${VERSION}';
+              }
+            }
+            if (data.devDependencies) {
+              for (const [k, v] of Object.entries(data.devDependencies)) {
+                if (v === 'workspace:*') data.devDependencies[k] = '^${VERSION}';
+              }
+            }
+            fs.writeFileSync(p, JSON.stringify(data, null, '\t') + '\n');
+          "
+
+      # https://www.npmjs.com/package/pptx-viewer-mcp
+      - name: Publish pptx-viewer-mcp
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          EXISTING=$(npm view pptx-viewer-mcp@"$VERSION" version 2>/dev/null || echo "")
+          if [ "$EXISTING" = "$VERSION" ]; then
+            echo "pptx-viewer-mcp@$VERSION already published, skipping"
+          else
+            npm publish --provenance --access public
+          fi
+        working-directory: packages/tools
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
