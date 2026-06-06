@@ -1,6 +1,6 @@
 {
 	"name": "@mkabatek/pptx-viewer",
-	"version": "1.5.2",
+	"version": "1.5.3",
 	"description": "React-based PowerPoint viewer, editor, and canvas export — depends on pptx-viewer-core",
 	"keywords": [
 		"editor",
