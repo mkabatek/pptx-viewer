@@ -1,6 +1,6 @@
 {
-	"name": "pptx-viewer",
-	"version": "1.5.0",
+	"name": "@mkabatek/pptx-viewer",
+	"version": "1.5.1",
 	"description": "React-based PowerPoint viewer, editor, and canvas export — depends on pptx-viewer-core",
 	"keywords": [
 		"editor",
@@ -11,15 +11,15 @@
 		"react",
 		"viewer"
 	],
-	"homepage": "https://github.com/ChristopherVR/pptx-viewer",
+	"homepage": "https://github.com/mkabatek/pptx-viewer",
 	"bugs": {
-		"url": "https://github.com/ChristopherVR/pptx-viewer/issues"
+		"url": "https://github.com/mkabatek/pptx-viewer/issues"
 	},
 	"license": "MIT",
-	"author": "ChristopherVR",
+	"author": "mkabatek",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/ChristopherVR/pptx-viewer.git",
+		"url": "https://github.com/mkabatek/pptx-viewer.git",
 		"directory": "packages/react"
 	},
 	"files": [

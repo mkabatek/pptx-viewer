@@ -10,7 +10,6 @@ export default defineConfig((options) => ({
 	external: [
 		'react',
 		'react-dom',
-		'pptx-viewer-core',
 		'framer-motion',
 		'lucide-react',
 		'react-icons',
@@ -23,6 +22,9 @@ export default defineConfig((options) => ({
 		'i18next',
 		'react-i18next',
 	],
+	// Bundle workspace-only packages so the published dist is self-contained.
+	// These are not on npm — consumers cannot install them separately.
+	noExternal: ['pptx-viewer-core', 'emf-converter', 'mtx-decompressor'],
 	treeshake: true,
 	platform: 'browser',
 }));
