@@ -30,7 +30,7 @@ jobs:
           bun run --filter 'emf-converter' build
           bun run --filter 'mtx-decompressor' build
           bun run --filter 'pptx-viewer-core' build
-          bun run --filter 'pptx-viewer' build
+          bun run --filter '@mkabatek/pptx-viewer' build
           cd packages/react && npx @tailwindcss/cli -i src/styles/pptx-viewer.css -o dist/pptx-viewer.css --minify
 
       - name: Publish to npm
