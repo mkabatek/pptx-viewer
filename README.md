@@ -24,7 +24,7 @@ A comprehensive TypeScript monorepo for parsing, editing, rendering, and convert
 
 ### Why this fork exists
 
-The original `pptx-viewer` package on npm (v0.2.2) is an unrelated vanilla JS library by a different author. `ChristopherVR/pptx-viewer` is the React component library described here, but it was not published to npm in a consumable form — only the monorepo source was available. This fork adds the distribution plumbing needed to install and use the React package as a standard npm dependency.
+`ChristopherVR/pptx-viewer` was not published to npm in a consumable form — only the monorepo source was available. This fork adds the distribution plumbing needed to install and use the React package as a standard npm dependency.
 
 ### What changed
 
@@ -36,7 +36,7 @@ The original `pptx-viewer` package on npm (v0.2.2) is an unrelated vanilla JS li
 - `author`, `homepage`, `bugs.url`, and `repository.url` updated to reflect this fork.
 - Version bumped to `1.5.1`.
 
-**Why:** Scoped package names (`@scope/name`) are guaranteed unique on npm. The original name was taken by a completely different library, making it impossible to publish without a conflict.
+**Why:** Scoped package names (`@scope/name`) are the standard convention for personal forks and distributions — they are guaranteed unique on npm and make the provenance of the package clear.
 
 #### 2. Bundled workspace dependencies
 
