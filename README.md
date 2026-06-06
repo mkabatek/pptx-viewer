@@ -1,15 +1,18 @@
-# pptx-viewer
+# @mkabatek/pptx-viewer
+
+> **This is a fork of [ChristopherVR/pptx-viewer](https://github.com/ChristopherVR/pptx-viewer), published as `@mkabatek/pptx-viewer` on npm.**
+> Full credit for the library design, implementation, and documentation goes to the original author.
+> See [Fork Changes](#fork-changes) for a description of what was modified and why.
 
 A comprehensive TypeScript monorepo for parsing, editing, rendering, and converting Microsoft PowerPoint (`.pptx`) files in the browser and Node.js.
 
-**Note: I'm developing this with Claude Code using Opus 4.6**
-
 ## Table of Contents
 
+- [Fork Changes](#fork-changes)
 - [Overview](#overview)
 - [Packages](#packages)
 - [Limitations](#limitations)
-- [Getting Started](#getting-started)
+- [Installation](#installation)
 - [Quick Start](#quick-start)
 - [Architecture](#architecture)
 - [Development](#development)
@@ -17,7 +20,45 @@ A comprehensive TypeScript monorepo for parsing, editing, rendering, and convert
 
 ---
 
-## Overview
+## Fork Changes
+
+### Why this fork exists
+
+The original `pptx-viewer` package on npm (v0.2.2) is an unrelated vanilla JS library by a different author. `ChristopherVR/pptx-viewer` is the React component library described here, but it was not published to npm in a consumable form — only the monorepo source was available. This fork adds the distribution plumbing needed to install and use the React package as a standard npm dependency.
+
+### What changed
+
+#### 1. Package rename and npm publishing
+
+**`packages/react/package.json`**
+
+- `name` changed from `pptx-viewer` to `@mkabatek/pptx-viewer` to avoid colliding with the unrelated vanilla JS package already occupying that name on npm.
+- `author`, `homepage`, `bugs.url`, and `repository.url` updated to reflect this fork.
+- Version bumped to `1.5.1`.
+
+**Why:** Scoped package names (`@scope/name`) are guaranteed unique on npm. The original name was taken by a completely different library, making it impossible to publish without a conflict.
+
+#### 2. Bundled workspace dependencies
+
+**`packages/react/tsup.config.ts`**
+
+- Removed `pptx-viewer-core` from the `external` array.
+- Added `noExternal: ['pptx-viewer-core', 'emf-converter', 'mtx-decompressor']`.
+
+**Why:** `pptx-viewer-core`, `emf-converter`, and `mtx-decompressor` are internal workspace packages that do not exist on npm independently. Leaving them as external references in the built dist means any consumer trying to install `@mkabatek/pptx-viewer` would get unresolvable imports at runtime. Bundling them via `noExternal` produces a self-contained dist that works without requiring consumers to install packages that don't exist in their registry.
+
+#### 3. Automated npm publish workflow
+
+**`.github/workflows/publish.yml`** _(new file)_
+
+- Triggers on `push` to any `v*` tag.
+- Builds all packages in dependency order using the existing `bun run --filter` scripts.
+- Publishes `packages/react` to npm with `npm publish --access public`.
+- Requires an `NPM_TOKEN` secret in the repository settings.
+
+**Why:** The original repo had no publish automation. Releases were manual and required local environment setup. The new workflow makes publishing a single `git tag` + `git push` operation and keeps the dist out of version control.
+
+---
 
 `pptx-viewer` is a monorepo containing four packages that together provide a full-featured PowerPoint SDK:
 
@@ -98,32 +139,49 @@ pptx-viewer (React)
 
 ---
 
-## Getting Started
+## Installation
 
-### Prerequisites
-
-- [Bun](https://bun.sh/) (package manager and runtime)
-- Node.js 18+ (for TypeScript compilation)
-
-### Installation
+### Using the published npm package
 
 ```bash
-# Clone the repository
-git clone <repo-url>
+npm install @mkabatek/pptx-viewer
+# or
+yarn add @mkabatek/pptx-viewer
+```
+
+The package bundles its internal dependencies (`pptx-viewer-core`, `emf-converter`, `mtx-decompressor`). You only need to install the peer dependencies your project uses:
+
+```bash
+npm install jszip fast-xml-parser framer-motion lucide-react react-icons i18next react-i18next
+```
+
+### Developing the library locally
+
+**Prerequisites:** [Bun](https://bun.sh/) and Node.js 18+.
+
+```bash
+git clone https://github.com/mkabatek/pptx-viewer.git
 cd pptx-viewer
 
-# Install dependencies
 bun install
 
 # Build all packages (order: emf-converter -> mtx-decompressor -> core -> react)
 bun run build
 
-# Run tests
 bun run test
-
-# Type-check
 bun run typecheck
 ```
+
+### Publishing a new version
+
+Bump the version in `packages/react/package.json`, then push a matching tag:
+
+```bash
+git tag v1.5.2
+git push origin v1.5.2
+```
+
+The [publish workflow](.github/workflows/publish.yml) builds and publishes to npm automatically. Requires an `NPM_TOKEN` secret configured in the repository settings.
 
 ---
 
@@ -208,7 +266,7 @@ console.log(markdown);
 ### React Viewer Component
 
 ```tsx
-import { PowerPointViewer } from 'pptx-viewer/viewer';
+import { PowerPointViewer } from '@mkabatek/pptx-viewer';
 
 function App() {
 	const [content, setContent] = useState<ArrayBuffer | null>(null);
