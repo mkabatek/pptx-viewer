@@ -1,6 +1,6 @@
 {
 	"name": "@mkabatek/pptx-viewer",
-	"version": "1.5.4",
+	"version": "1.5.5",
 	"description": "React-based PowerPoint viewer, editor, and canvas export — depends on pptx-viewer-core",
 	"keywords": [
 		"editor",
@@ -58,10 +58,7 @@
 	"dependencies": {
 		"clsx": "^2.1.1",
 		"dompurify": "^3.4.2",
-		"emf-converter": "workspace:*",
 		"html2canvas-pro": "^2.0.2",
-		"mtx-decompressor": "workspace:*",
-		"pptx-viewer-core": "workspace:*",
 		"tailwind-merge": "^3.5.0"
 	},
 	"devDependencies": {
@@ -95,9 +92,5 @@
 		"y-websocket": "^3.0.0",
 		"yjs": "^13.6.30"
 	},
-	"bundledDependencies": [
-		"emf-converter",
-		"mtx-decompressor",
-		"pptx-viewer-core"
-	]
+	"bundledDependencies": []
 }
