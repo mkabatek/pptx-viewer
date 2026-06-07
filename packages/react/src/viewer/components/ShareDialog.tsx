@@ -150,7 +150,7 @@ export function ShareDialog({
 			{/* Backdrop */}
 			<button
 				type='button'
-				style={{ zIndex: 200 }}
+				style={{ zIndex: 1200 }}
 				className='fixed inset-0 bg-black/50'
 				aria-label={t('pptx.share.closeDialog')}
 				onClick={onClose}
@@ -158,7 +158,7 @@ export function ShareDialog({
 
 			{/* Dialog */}
 			<div
-				style={{ zIndex: 201 }}
+				style={{ zIndex: 1201 }}
 				className='fixed inset-0 flex items-center justify-center pointer-events-none'
 			>
 				<div

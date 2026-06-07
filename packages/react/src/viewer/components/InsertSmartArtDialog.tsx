@@ -48,13 +48,17 @@ export function InsertSmartArtDialog({
 			{/* Backdrop */}
 			<button
 				type='button'
-				className='fixed inset-0 z-50 bg-black/50'
+				style={{ zIndex: 1200 }}
+				className='fixed inset-0 bg-black/50'
 				onClick={onClose}
 				aria-label='Close'
 			/>
 
 			{/* Dialog */}
-			<div className='fixed inset-0 z-50 flex items-center justify-center pointer-events-none'>
+			<div
+				style={{ zIndex: 1201 }}
+				className='fixed inset-0 flex items-center justify-center pointer-events-none'
+			>
 				<div
 					className='pointer-events-auto w-[600px] max-w-[90vw] max-h-[80vh] rounded-lg border border-border bg-background shadow-2xl flex flex-col'
 					role='dialog'

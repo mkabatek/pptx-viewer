@@ -37,7 +37,10 @@ export function KeepAnnotationsDialog({
 	}
 
 	return (
-		<div className='fixed inset-0 z-[200] flex items-center justify-center bg-black/50'>
+		<div
+			style={{ zIndex: 1200 }}
+			className='fixed inset-0 flex items-center justify-center bg-black/50'
+		>
 			<div className='bg-background border border-border rounded-lg shadow-xl w-[420px] max-w-[90vw] p-6 animate-in fade-in zoom-in-95 duration-200'>
 				{/* Icon + Title */}
 				<div className='flex items-center gap-3 mb-4'>

@@ -128,7 +128,10 @@ export function PrintDialog({
 
 	// ── Render ──────────────────────────────────────────────────────────
 	return (
-		<div className='fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm'>
+		<div
+			style={{ zIndex: 1200 }}
+			className='fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm'
+		>
 			<div className='w-[780px] max-h-[90vh] rounded-xl border border-border bg-background shadow-2xl flex flex-col'>
 				{/* Header */}
 				<div className='flex items-center justify-between px-5 py-4 border-b border-border'>
