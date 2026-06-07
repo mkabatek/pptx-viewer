@@ -91,7 +91,7 @@ export function InsertSmartArtDialog({
 									className={cn(
 										'w-full text-left px-3 py-1.5 text-xs transition-colors',
 										activeCategory === cat.id
-											? 'bg-primary text-primary-foreground'
+											? 'bg-primary text-white'
 											: 'text-foreground hover:bg-muted',
 									)}
 								>
@@ -148,7 +148,7 @@ export function InsertSmartArtDialog({
 							className={cn(
 								'px-3 py-1.5 text-xs rounded transition-colors',
 								selectedLayout
-									? 'bg-primary hover:bg-primary/80 text-primary-foreground'
+									? 'bg-primary hover:bg-primary/80 text-white'
 									: 'bg-muted text-muted-foreground cursor-not-allowed',
 							)}
 						>

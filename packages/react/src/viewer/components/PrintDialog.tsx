@@ -210,7 +210,7 @@ export function PrintDialog({
 						<button
 							type='button'
 							onClick={handlePrint}
-							className='px-4 py-2 text-sm rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors flex items-center gap-1.5'
+							className='px-4 py-2 text-sm rounded-lg bg-primary text-white hover:bg-primary/90 transition-colors flex items-center gap-1.5'
 						>
 							<LuPrinter className='w-3.5 h-3.5' />
 							{t('pptx.print.printButton')}
